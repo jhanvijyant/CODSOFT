@@ -1,0 +1,109 @@
+#include <iostream>
+
+using namespace std;
+
+char board[3][3];
+const char PLAYER_X = 'X';
+const char PLAYER_O = 'O';
+
+void display_board() {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            cout << board[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+bool check_win(char player) {
+    // Check rows
+    for (int i = 0; i < 3; ++i) {
+        if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
+            return true;
+        }
+    }
+
+    // Check columns
+    for (int i = 0; i < 3; ++i) {
+        if (board[0][i] == player && board[1][i] == player && board[2][i] == player) {
+            return true;
+        }
+    }
+
+    // Check diagonals
+    if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
+        (board[0][2] == player && board[1][1] == player && board[2][0] == player)) {
+        return true;
+    }
+
+    return false;
+}
+
+bool check_draw() {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (board[i][j] == ' ') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void update_board(int row, int col, char player) {
+    board[row][col] = player;
+}
+
+void play_game() {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            board[i][j] = ' ';
+        }
+    }
+
+    char current_player = PLAYER_X;
+    while (true) {
+        display_board();
+        int row, col;
+        cout << "Player " << current_player << ", enter your move (row [0-2] and col [0-2]): ";
+        cin >> row >> col;
+
+        if (row < 0 || row > 2 || col < 0 || col > 2) {
+            cout << "Invalid move. Row and column must be between 0 and 2." << endl;
+            continue;
+        }
+
+        if (board[row][col] != ' ') {
+            cout << "Invalid move. Cell is already occupied." << endl;
+            continue;
+        }
+
+        update_board(row, col, current_player);
+
+        if (check_win(current_player)) {
+            display_board();
+            cout << "Player " << current_player << " wins!" << endl;
+            break;
+        } else if (check_draw()) {
+            display_board();
+            cout << "It's a draw!" << endl;
+            break;
+        } else {
+            current_player = (current_player == PLAYER_X) ? PLAYER_O : PLAYER_X;
+        }
+    }
+}
+
+int main() {
+    while (true) {
+        play_game();
+        char play_again;
+        cout << "Do you want to play again? (y/n): ";
+        cin >> play_again;
+        if (play_again != 'y') {
+            break;
+        }
+    }
+
+    return 0;
+}
